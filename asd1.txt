@@ -1,0 +1,6 @@
+﻿20:26:13:162	Build started at 20:26...
+20:26:13:232	1>------ Build started: Project: aisdlab1, Configuration: Debug x64 ------
+20:26:13:328	1>main.cpp
+20:26:14:271	1>aisdlab1.vcxproj -> C:\Users\MSI\source\repos\aisdlab1\x64\Debug\aisdlab1.exe
+20:26:14:290	========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+20:26:14:290	========== Build completed at 20:26 and took 01,192 seconds ==========
