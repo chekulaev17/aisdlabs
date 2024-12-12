@@ -57,3 +57,28 @@ public:
         }
         return *this;
     }
+  void push_tail(T value) {
+        Node<T>* new_node = new Node<T>(value);
+        if (!tail) {
+            head = tail = new_node;
+            new_node->next = head;
+        } else {
+            new_node->next = head;
+            tail->next = new_node;
+            tail = new_node;
+        }
+        ++size;
+    }
+
+    void push_head(T value) {
+        Node<T>* new_node = new Node<T>(value);
+        if (!head) {
+            head = tail = new_node;
+            new_node->next = head;
+        } else {
+            new_node->next = head;
+            head = new_node;
+            tail->next = head;
+        }
+        ++size;
+    }
