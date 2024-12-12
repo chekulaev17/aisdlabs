@@ -182,3 +182,13 @@ void delete_node(T value) {
             current = current->next;
         } while (current != other.head);
     }
+   friend std::ostream& operator<<(std::ostream& os, const LinkedList& list) {
+        if (list.size == 0) return os;
+        Node<T>* current = list.head;
+        do {
+            os << current->data << " ";
+            current = current->next;
+        } while (current != list.head);
+        return os;
+    }
+};
