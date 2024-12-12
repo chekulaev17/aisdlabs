@@ -82,3 +82,32 @@ public:
         }
         ++size;
     }
+void pop_head() {
+        if (size == 0) throw std::underflow_error("List is empty.");
+        Node<T>* temp = head;
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            tail->next = head;
+        }
+        delete temp;
+        --size;
+    }
+
+    void pop_tail() {
+        if (size == 0) throw std::underflow_error("List is empty.");
+        if (head == tail) {
+            delete head;
+            head = tail = nullptr;
+        } else {
+            Node<T>* current = head;
+            while (current->next != tail) {
+                current = current->next;
+            }
+            delete tail;
+            tail = current;
+            tail->next = head;
+        }
+        --size;
+    }
