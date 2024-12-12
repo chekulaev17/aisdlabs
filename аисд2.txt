@@ -207,3 +207,16 @@ bool is_happy(int number) {
     }
     return number == 1;
 }
+void find_unhappy_numbers(int N) {
+    LinkedList<int> numbers;
+    for (int i = 1; i <= N; ++i) {
+        numbers.push_tail(i);
+    }
+    std::cout << "Unhappy numbers: ";
+    for (size_t i = 0; i < numbers.get_size(); ++i) {
+        if (!is_happy(numbers[i])) {
+            std::cout << numbers[i] << " ";
+        }
+    }
+    std::cout << std::endl;
+}
