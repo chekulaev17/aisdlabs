@@ -152,3 +152,33 @@ void delete_node(T value) {
     size_t get_size() const {
         return size;
     }
+ void push_head(const LinkedList& other) {
+        if (!other.head) return;
+
+        LinkedList<T> temp;
+
+        Node<T>* current = other.head;
+        do {
+            temp.push_tail(current->data);
+            current = current->next;
+        } while (current != other.head);
+
+        current = this->head;
+        if (current) {
+            do {
+                temp.push_tail(current->data);
+                current = current->next;
+            } while (current != this->head);
+        }
+
+        *this = temp;
+    }
+
+    void push_tail(const LinkedList& other) {
+        Node<T>* current = other.head;
+        if (!current) return;
+        do {
+            push_tail(current->data);
+            current = current->next;
+        } while (current != other.head);
+    }
