@@ -131,3 +131,24 @@ void delete_node(T value) {
             }
         } while (current != tail);
     }
+  T operator[](size_t index) const {
+        if (index >= size) throw std::out_of_range("Index out of range.");
+        Node<T>* current = head;
+        for (size_t i = 0; i < index; ++i) {
+            current = current->next;
+        }
+        return current->data;
+    }
+
+    T& operator[](size_t index) {
+        if (index >= size) throw std::out_of_range("Index out of range.");
+        Node<T>* current = head;
+        for (size_t i = 0; i < index; ++i) {
+            current = current->next;
+        }
+        return current->data;
+    }
+
+    size_t get_size() const {
+        return size;
+    }
