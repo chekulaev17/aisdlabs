@@ -111,3 +111,23 @@ void pop_head() {
         }
         --size;
     }
+void delete_node(T value) {
+        while (size > 0 && head->data == value) {
+            pop_head();
+        }
+        if (size == 0) return;
+        Node<T>* current = head;
+        do {
+            if (current->next->data == value) {
+                Node<T>* temp = current->next;
+                current->next = temp->next;
+                if (temp == tail) {
+                    tail = current;
+                }
+                delete temp;
+                --size;
+            } else {
+                current = current->next;
+            }
+        } while (current != tail);
+    }
