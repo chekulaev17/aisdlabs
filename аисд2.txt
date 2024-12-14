@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <cmath>
 
+// Node structure
 template <typename T>
 struct Node {
     T data;
@@ -11,13 +12,15 @@ struct Node {
     Node(T value) : data(value), next(nullptr) {}
 };
 
+// Circular linked list
 template <typename T>
 class LinkedList {
 private:
     Node<T>* head;
     Node<T>* tail;
     size_t size;
- void copy_list(const LinkedList& other) {
+
+    void copy_list(const LinkedList& other) {
         if (other.size == 0) return;
         Node<T>* current = other.head;
         do {
@@ -31,19 +34,12 @@ private:
             pop_head();
         }
     }
+
 public:
     LinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
     LinkedList(const LinkedList& other) : head(nullptr), tail(nullptr), size(0) {
         copy_list(other);
-    }
-
-    LinkedList(size_t n, T min_val, T max_val) : head(nullptr), tail(nullptr), size(0) {
-        std::mt19937 gen(42);
-        std::uniform_int_distribution<T> dist(min_val, max_val);
-        for (size_t i = 0; i < n; ++i) {
-            push_tail(dist(gen));
-        }
     }
 
     ~LinkedList() {
@@ -57,50 +53,36 @@ public:
         }
         return *this;
     }
-  void push_tail(T value) {
+
+    LinkedList(size_t n, T min_val, T max_val) : head(nullptr), tail(nullptr), size(0) {
+        std::mt19937 gen(42); // Random seed
+        std::uniform_int_distribution<T> dist(min_val, max_val);
+        for (size_t i = 0; i < n; ++i) {
+            push_tail(dist(gen));
+        }
+    }
+
+
+    void push_tail(T value) {
         Node<T>* new_node = new Node<T>(value);
         if (!tail) {
             head = tail = new_node;
             new_node->next = head;
-        } else {
+        }
+        else {
             new_node->next = head;
             tail->next = new_node;
             tail = new_node;
         }
         ++size;
     }
-
-    void push_head(T value) {
-        Node<T>* new_node = new Node<T>(value);
-        if (!head) {
-            head = tail = new_node;
-            new_node->next = head;
-        } else {
-            new_node->next = head;
-            head = new_node;
-            tail->next = head;
-        }
-        ++size;
-    }
-void pop_head() {
-        if (size == 0) throw std::underflow_error("List is empty.");
-        Node<T>* temp = head;
-        if (head == tail) {
-            head = tail = nullptr;
-        } else {
-            head = head->next;
-            tail->next = head;
-        }
-        delete temp;
-        --size;
-    }
-
     void pop_tail() {
         if (size == 0) throw std::underflow_error("List is empty.");
         if (head == tail) {
             delete head;
             head = tail = nullptr;
-        } else {
+        }
+        else {
             Node<T>* current = head;
             while (current->next != tail) {
                 current = current->next;
@@ -111,7 +93,22 @@ void pop_head() {
         }
         --size;
     }
-void delete_node(T value) {
+
+    void pop_head() {
+        if (size == 0) throw std::underflow_error("List is empty.");
+        Node<T>* temp = head;
+        if (head == tail) {
+            head = tail = nullptr;
+        }
+        else {
+            head = head->next;
+            tail->next = head;
+        }
+        delete temp;
+        --size;
+    }
+
+    void delete_node(T value) {
         while (size > 0 && head->data == value) {
             pop_head();
         }
@@ -126,33 +123,21 @@ void delete_node(T value) {
                 }
                 delete temp;
                 --size;
-            } else {
+            }
+            else {
                 current = current->next;
             }
         } while (current != tail);
     }
-  T operator[](size_t index) const {
-        if (index >= size) throw std::out_of_range("Index out of range.");
-        Node<T>* current = head;
-        for (size_t i = 0; i < index; ++i) {
-            current = current->next;
-        }
-        return current->data;
-    }
 
-    T& operator[](size_t index) {
-        if (index >= size) throw std::out_of_range("Index out of range.");
-        Node<T>* current = head;
-        for (size_t i = 0; i < index; ++i) {
-            current = current->next;
-        }
-        return current->data;
+    Node<T>* get_head() const {
+        return head;
     }
 
     size_t get_size() const {
         return size;
     }
- void push_head(const LinkedList& other) {
+    void push_head(const LinkedList& other) {
         if (!other.head) return;
 
         LinkedList<T> temp;
@@ -181,8 +166,25 @@ void delete_node(T value) {
             push_tail(current->data);
             current = current->next;
         } while (current != other.head);
+    } 
+    T operator[](size_t index) const {
+        if (index >= size) throw std::out_of_range("Index out of range.");
+        Node<T>* current = head;
+        for (size_t i = 0; i < index; ++i) {
+            current = current->next;
+        }
+        return current->data;
     }
-   friend std::ostream& operator<<(std::ostream& os, const LinkedList& list) {
+
+    T& operator[](size_t index) {
+        if (index >= size) throw std::out_of_range("Index out of range.");
+        Node<T>* current = head;
+        for (size_t i = 0; i < index; ++i) {
+            current = current->next;
+        }
+        return current->data;
+    }
+    friend std::ostream& operator<<(std::ostream& os, const LinkedList& list) {
         if (list.size == 0) return os;
         Node<T>* current = list.head;
         do {
@@ -192,48 +194,89 @@ void delete_node(T value) {
         return os;
     }
 };
+
+// Generate lucky numbers using the sieve algorithm
+template<typename T>
+LinkedList<T> lucky_numbers(int n) {
+    LinkedList<T> lucky_numbers;
+    for (int i = 1; i <= n; ++i) {
+        lucky_numbers.push_tail(i);
+    }
+
+    int step = 2;
+    while (step <= lucky_numbers.get_size()) {
+        Node<T>* current = lucky_numbers.get_head();
+        int index = 1;
+
+        LinkedList<T> to_delete;
+        do {
+            if (index % step == 0) {
+                to_delete.push_tail(current->data);
+            }
+            current = current->next;
+            ++index;
+        } while (current != lucky_numbers.get_head());
+
+        Node<T>* delete_current = to_delete.get_head();
+        do {
+            lucky_numbers.delete_node(delete_current->data);
+            delete_current = delete_current->next;
+        } while (delete_current != to_delete.get_head() && to_delete.get_size() > 0);
+
+        if (step < lucky_numbers.get_size()) {
+            Node<T>* step_node = lucky_numbers.get_head();
+            for (int i = 1; i < step; ++i) {
+                step_node = step_node->next;
+            }
+            step = step_node->data;
+        }
+        else {
+            break;
+        }
+    }
+
+    return lucky_numbers;
+}
+
+// Generate a list of unlucky numbers
+template<typename T>
+LinkedList<T> unlucky_numbers(const LinkedList<T>& lucky_numbers, int n) {
+    LinkedList<T> all_numbers;
+    for (int i = 1; i <= n; ++i) {
+        all_numbers.push_tail(i);
+    }
+
+    LinkedList<T> unlucky_numbers;
+    Node<T>* current = all_numbers.get_head();
+    do {
+        bool is_lucky = false;
+        Node<T>* lucky_current = lucky_numbers.get_head();
+        do {
+            if (current->data == lucky_current->data) {
+                is_lucky = true;
+                break;
+            }
+            lucky_current = lucky_current->next;
+        } while (lucky_current != lucky_numbers.get_head());
+
+        if (!is_lucky) {
+            unlucky_numbers.push_tail(current->data);
+        }
+        current = current->next;
+    } while (current != all_numbers.get_head());
+
+    return unlucky_numbers;
+}
 #include "LinkedList.h"
-bool is_happy(int number) {
-    std::unordered_set<int> seen;
-    while (number != 1 && seen.find(number) == seen.end()) {
-        seen.insert(number);
-        int sum = 0;
-        while (number > 0) {
-            int digit = number % 10;
-            sum += digit * digit;
-            number /= 10;
-        }
-        number = sum;
-    }
-    return number == 1;
-}
-void find_unhappy_numbers(int N) {
-    LinkedList<int> numbers;
-    for (int i = 1; i <= N; ++i) {
-        numbers.push_tail(i);
-    }
-    std::cout << "Unhappy numbers: ";
-    for (size_t i = 0; i < numbers.get_size(); ++i) {
-        if (!is_happy(numbers[i])) {
-            std::cout << numbers[i] << " ";
-        }
-    }
-    std::cout << std::endl;
-}
-double evaluate_polynomial(const LinkedList<std::pair<int, double>>& poly, double x) {
-    double result = 0.0;
-    for (size_t i = 0; i < poly.get_size(); ++i) {
-        auto term = poly[i];
-        result += term.second * std::pow(x, term.first);
-    }
-    return result;
-}
+
+
 int main() {
     try {
+
         LinkedList<int> list;
         list.push_tail(1);
         list.push_tail(2);
-        list.push_head(0);
+        list.push_tail(0);
         std::cout << "List: " << list << std::endl;
 
         LinkedList<int> another_list(5, 10, 50);
@@ -261,18 +304,17 @@ int main() {
         std::cout << "After modifying index 1: " << list << std::endl;
 
         std::cout << "List size: " << list.get_size() << std::endl;
+        int n = 30;
+        LinkedList<int> lucky = lucky_numbers<int>(n);
+        LinkedList<int> unlucky = unlucky_numbers(lucky, n);
 
-        find_unhappy_numbers(50);
-
-        LinkedList<std::pair<int, double>> polynomial;
-        polynomial.push_tail({ 2, 3.0 });
-        polynomial.push_tail({ 1, 4.0 });
-        polynomial.push_tail({ 0, -5.0 });
-
-        double x = 2.0;
-        std::cout << "Polynomial value at x=" << x << ": " << evaluate_polynomial(polynomial, x) << std::endl;
-    } catch (const std::exception& e) {
+        std::cout << "Lucky numbers: " << lucky << std::endl;
+        std::cout << "Unlucky numbers: " << unlucky << std::endl;
+    }
+    catch (const std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
     }
     return 0;
 }
+
+
